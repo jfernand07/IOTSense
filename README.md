@@ -151,7 +151,7 @@ El fin es proporcionar a los usuarios un panorama claro y estadístico para el c
 - Wifi  
 - Lógica para enviar datos a Arduino IoT Cloud
 
-
+```
 iotsense-backend/
 ├─ node_modules/
 ├─ .env
@@ -313,5 +313,4 @@ iotsense-backend/
     │       │   └── recommendation.entity.ts
     │       └── dto/
     │           └── create-recommendation.dto.ts
-
-
+```
