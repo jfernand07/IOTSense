@@ -149,5 +149,169 @@ El fin es proporcionar a los usuarios un panorama claro y estadístico para el c
 - Arduino/ESP32  
 - Sensores listados  
 - Wifi  
-- Lógica para enviar datos a Arduino IoT Cloud  
+- Lógica para enviar datos a Arduino IoT Cloud
+
+
+iotsense-backend/
+├─ node_modules/
+├─ .env
+├─ .env.example
+├─ nest-cli.json
+├─ package.json
+├─ tsconfig.json
+├─ README.md
+│
+└── src/
+    ├── main.ts
+    ├── app.module.ts
+    │
+    ├── config/
+    │   ├── configuration.ts
+    │   ├── validation.schema.ts
+    │   ├── database.config.ts
+    │   ├── arduino-cloud.config.ts
+    │   └── jwt.config.ts
+    │
+    ├── common/
+    │   ├── decorators/
+    │   │   ├── current-user.decorator.ts
+    │   │   └── roles.decorator.ts
+    │   │
+    │   ├── exceptions/
+    │   │   └── domain-exception.ts
+    │   │
+    │   ├── filters/
+    │   │   └── http-exception.filter.ts
+    │   │
+    │   ├── guards/
+    │   │   ├── jwt-auth.guard.ts
+    │   │   └── roles.guard.ts
+    │   │
+    │   ├── interceptors/
+    │   │   └── logging.interceptor.ts
+    │   │
+    │   ├── pipes/
+    │   │   └── validation.pipe.ts
+    │   │
+    │   └── dto/
+    │       └── pagination.dto.ts
+    │
+    ├── modules/
+    │   ├── database/
+    │   │   ├── database.module.ts
+    │   │   ├── database.service.ts
+    │   │   ├── prisma/   (si usas Prisma)
+    │   │   │   └── schema.prisma
+    │   │   └── entities/ (si usas TypeORM)
+    │   │
+    │   ├── auth/
+    │   │   ├── auth.module.ts
+    │   │   ├── auth.controller.ts
+    │   │   ├── auth.service.ts
+    │   │   ├── dto/
+    │   │   │   ├── login.dto.ts
+    │   │   │   └── register.dto.ts
+    │   │   └── strategies/
+    │   │       ├── local.strategy.ts
+    │   │       └── jwt.strategy.ts
+    │   │
+    │   ├── users/
+    │   │   ├── users.module.ts
+    │   │   ├── users.controller.ts
+    │   │   ├── users.service.ts
+    │   │   ├── entities/
+    │   │   │   └── user.entity.ts
+    │   │   └── dto/
+    │   │       ├── create-user.dto.ts
+    │   │       └── update-user.dto.ts
+    │   │
+    │   ├── roles/
+    │   │   ├── roles.module.ts
+    │   │   ├── roles.service.ts
+    │   │   └── entities/
+    │   │       └── role.entity.ts
+    │   │
+    │   ├── websocket/
+    │   │   ├── websocket.module.ts
+    │   │   ├── gateways/
+    │   │   │   ├── iot.gateway.ts
+    │   │   │   └── notifications.gateway.ts
+    │   │   └── dto/
+    │   │       └── message.dto.ts
+    │   │
+    │   ├── scheduler/
+    │   │   ├── scheduler.module.ts
+    │   │   └── jobs/
+    │   │       ├── sync-iot-readings.job.ts
+    │   │       ├── generate-daily-report.job.ts
+    │   │       └── clean-old-data.job.ts
+    │   │
+    │   ├── iot-cloud/
+    │   │   ├── iot-cloud.module.ts
+    │   │   ├── iot-cloud.service.ts
+    │   │   ├── dto/
+    │   │   │   └── iot-reading.dto.ts
+    │   │   └── clients/
+    │   │       ├── arduino-api.client.ts
+    │   │       └── mqtt.client.ts (opcional)
+    │   │
+    │   ├── plants/
+    │   │   ├── plants.module.ts
+    │   │   ├── plants.controller.ts
+    │   │   ├── plants.service.ts
+    │   │   ├── entities/
+    │   │   │   └── plant.entity.ts
+    │   │   └── dto/
+    │   │       ├── create-plant.dto.ts
+    │   │       └── update-plant.dto.ts
+    │   │
+    │   ├── sensors/
+    │   │   ├── sensors.module.ts
+    │   │   ├── sensors.controller.ts
+    │   │   ├── sensors.service.ts
+    │   │   ├── entities/
+    │   │   │   └── sensor.entity.ts
+    │   │   └── dto/
+    │   │       ├── create-sensor.dto.ts
+    │   │       └── update-sensor.dto.ts
+    │   │
+    │   ├── readings/
+    │   │   ├── readings.module.ts
+    │   │   ├── readings.controller.ts
+    │   │   ├── readings.service.ts
+    │   │   ├── entities/
+    │   │   │   └── reading.entity.ts
+    │   │   └── dto/
+    │   │       ├── create-reading.dto.ts
+    │   │       └── query-readings.dto.ts
+    │   │
+    │   ├── rules-engine/
+    │   │   ├── rules-engine.module.ts
+    │   │   ├── rules-engine.service.ts
+    │   │   ├── rules/
+    │   │   │   ├── humidity.rules.ts
+    │   │   │   ├── temperature.rules.ts
+    │   │   │   ├── light.rules.ts
+    │   │   │   └── co2.rules.ts
+    │   │   └── models/
+    │   │       └── plant-status.model.ts
+    │   │
+    │   ├── alerts/
+    │   │   ├── alerts.module.ts
+    │   │   ├── alerts.controller.ts
+    │   │   ├── alerts.service.ts
+    │   │   ├── entities/
+    │   │   │   └── alert.entity.ts
+    │   │   └── dto/
+    │   │       └── create-alert.dto.ts
+    │   │
+    │   └── recommendations/
+    │       ├── recommendations.module.ts
+    │       ├── recommendations.controller.ts
+    │       ├── recommendations.service.ts
+    │       ├── entities/
+    │       │   └── recommendation.entity.ts
+    │       └── dto/
+    │           └── create-recommendation.dto.ts
+
 
