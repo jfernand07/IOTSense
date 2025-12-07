@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
+import { Plant } from '../../plants/entities/plant.entity';
 
 @Entity({ name: 'plant_type' })
 export class PlantType {
@@ -54,4 +56,7 @@ export class PlantType {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(() => Plant, (plant) => plant.plantType)
+  plants: Plant[];
 }

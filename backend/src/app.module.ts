@@ -4,6 +4,12 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PlantTypesModule } from './plant-types/plant-types.module';
 import { DevicesModule } from './devices/devices.module';
+import { SensorTypesModule } from './sensor-types/sensor-types.module';
+import { PlantsModule } from './plants/plants.module';
+import { SensorsModule } from './sensors/sensors.module';
+import { AlertsModule } from './alerts/alerts.module';
+import { RecommendationsModule } from './recommendations/recommendations.module';
+import { ReadingsModule } from './readings/readings.module';
 
 @Module({
   imports: [
@@ -30,6 +36,12 @@ import { DevicesModule } from './devices/devices.module';
     UsersModule,
     PlantTypesModule,
     DevicesModule,
+    SensorTypesModule,
+    PlantsModule,
+    SensorsModule,
+    AlertsModule,
+    RecommendationsModule,
+    ReadingsModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
+import { Plant } from '../../plants/entities/plant.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -36,4 +37,7 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(() => Plant, (plant) => plant.owner)
+  plants: Plant[];
 }
