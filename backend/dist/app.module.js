@@ -9,16 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const users_module_1 = require("./users/users.module");
+const users_module_1 = require("./module/users/users.module");
 const config_1 = require("@nestjs/config");
-const plant_types_module_1 = require("./plant-types/plant-types.module");
-const devices_module_1 = require("./devices/devices.module");
-const sensor_types_module_1 = require("./sensor-types/sensor-types.module");
-const plants_module_1 = require("./plants/plants.module");
-const sensors_module_1 = require("./sensors/sensors.module");
-const alerts_module_1 = require("./alerts/alerts.module");
-const recommendations_module_1 = require("./recommendations/recommendations.module");
-const readings_module_1 = require("./readings/readings.module");
+const plant_types_module_1 = require("./module/plant-types/plant-types.module");
+const devices_module_1 = require("./module/devices/devices.module");
+const sensor_types_module_1 = require("./module/sensor-types/sensor-types.module");
+const plants_module_1 = require("./module/plants/plants.module");
+const sensors_module_1 = require("./module/sensors/sensors.module");
+const alerts_module_1 = require("./module/alerts/alerts.module");
+const recommendations_module_1 = require("./module/recommendations/recommendations.module");
+const readings_module_1 = require("./module/readings/readings.module");
+const ai_module_1 = require("./ai/ai.module");
+const dataBase_1 = require("./config/dataBase");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,17 +33,7 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: (config) => ({
-                    type: 'postgres',
-                    host: config.get('DB_HOST'),
-                    port: Number(config.get('DB_PORT')),
-                    username: config.get('DB_USER'),
-                    password: config.get('DB_PASS'),
-                    database: config.get('DB_NAME'),
-                    autoLoadEntities: true,
-                    synchronize: config.get('DB_SYNC') === 'true',
-                    logging: true,
-                }),
+                useFactory: dataBase_1.databaseConfig,
             }),
             users_module_1.UsersModule,
             plant_types_module_1.PlantTypesModule,
@@ -52,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
             alerts_module_1.AlertsModule,
             recommendations_module_1.RecommendationsModule,
             readings_module_1.ReadingsModule,
+            ai_module_1.AiModule,
         ],
     })
 ], AppModule);

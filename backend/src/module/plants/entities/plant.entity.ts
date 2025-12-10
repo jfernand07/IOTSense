@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { PlantType } from '../../plant-types/entities/plant-type.entity';
-import { User } from '../../../users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'plant' })
 export class Plant {

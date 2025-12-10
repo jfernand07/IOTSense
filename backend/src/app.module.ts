@@ -11,6 +11,7 @@ import { AlertsModule } from './module/alerts/alerts.module';
 import { RecommendationsModule } from './module/recommendations/recommendations.module';
 import { ReadingsModule } from './module/readings/readings.module';
 import { AiModule } from './ai/ai.module';
+import { databaseConfig } from './config/dataBase';
 
 @Module({
   imports: [
@@ -21,17 +22,7 @@ import { AiModule } from './ai/ai.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: Number(config.get<string>('DB_PORT')),
-        username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASS'),
-        database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: config.get<string>('DB_SYNC') === 'true',
-        logging: true,
-      }),
+      useFactory: databaseConfig,
     }),
 
     UsersModule,
@@ -46,4 +37,4 @@ import { AiModule } from './ai/ai.module';
     AiModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
