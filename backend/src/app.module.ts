@@ -10,6 +10,7 @@ import { SensorsModule } from './sensors/sensors.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { ReadingsModule } from './readings/readings.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ReadingsModule } from './readings/readings.module';
     AlertsModule,
     RecommendationsModule,
     ReadingsModule,
+    AiModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
