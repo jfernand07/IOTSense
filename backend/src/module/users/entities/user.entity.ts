@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
-import { Plant } from '../../plants/entities/plant.entity';
+import { Plant } from '../../module/plants/entities/plant.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
