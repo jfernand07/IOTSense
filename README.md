@@ -113,6 +113,42 @@ El fin es proporcionar a los usuarios un panorama claro y estadístico para el c
 
 ---
 
+## 4. Pasos de Verificación Manual
+
+### 1. Verificación del Endpoint de AI (Anomalías)
+Para verificar que el sistema de detección de anomalías funciona correctamente, envía una petición POST usando Postman o cURL.
+
+**Endpoint:** `POST http://localhost:3000/ai/detectar-anomalias`
+
+**Headers:** `Content-Type: application/json`
+
+**Body:**
+```json
+{
+  "humidity": 45,
+  "temp": 28,
+  "lux": 600,
+  "co2": 450,
+  "lastValues": [
+    { "humidity": 46, "temp": 27.5 },
+    { "humidity": 45.5, "temp": 27.8 }
+  ],
+  "idealRanges": "Temp: 22-26°C, Hum: 50-60%"
+}
+```
+
+**Respuesta esperada:**
+Un objeto JSON generado por la IA con el análisis de los datos, indicando posibles anomalías (ej. temperatura alta, humedad baja).
+
+### 2. Verificación de Base de Datos
+- Asegúrate de que el servicio de PostgreSQL esté corriendo.
+- Al iniciar la app (`npm run start:dev`), busca en los logs: `[TypeOrmModule] Dependencies initialized`.
+
+### 3. Sincronización IoT
+- Revisa la consola para confirmar que el Job `SyncIoTReadings` se ejecute (según el cron programado) sin errores de autenticación.
+
+---
+
 ## ❓ Pregunta problematizadora
 ¿Se tiene previsto un flujo de control (actuadores) que devuelva comandos a los dispositivos IoT (ej. encender riego), o solo es un sistema de monitoreo pasivo?
 

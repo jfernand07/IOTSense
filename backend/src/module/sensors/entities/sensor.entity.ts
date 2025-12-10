@@ -9,9 +9,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { Device } from '../../devices/entities/device.entity';
-import { SensorType } from '../../sensor-types/entities/sensor-type.entity';
-import { Plant } from '../../plants/entities/plant.entity';
+import { Device } from '../../module/devices/entities/device.entity';
+import { SensorType } from '../../module/sensor-types/entities/sensor-type.entity';
+import { Plant } from '../../module/plants/entities/plant.entity';
 
 @Entity({ name: 'sensor' })
 export class Sensor {

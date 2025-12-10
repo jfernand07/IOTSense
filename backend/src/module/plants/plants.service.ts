@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Plant } from './entities/plant.entity';
 import { CreatePlantDto } from './dto/create-plant.dto';
-import { User } from '../users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { PlantType } from '../plant-types/entities/plant-type.entity';
 import { PlantListItemDto } from './dto/plant-list-item.dto';
 
