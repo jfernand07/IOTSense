@@ -9,7 +9,7 @@ import {
 
 import { Plant } from '../../plants/entities/plant.entity';
 import { Alert } from '../../alerts/entities/alert.entity';
-import { User } from '../../../users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 export enum RecommendationStatus {
   PENDING = 'PENDING',
