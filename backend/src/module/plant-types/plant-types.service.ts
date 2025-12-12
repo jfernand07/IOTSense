@@ -6,9 +6,7 @@ import { CreatePlantTypeDto } from './dto/create-plant-type.dto';
 
 @Injectable()
 export class PlantTypesService {
-  constructor(
-    @InjectRepository(PlantType) private readonly repo: Repository<PlantType>,
-  ) {}
+  constructor(@InjectRepository(PlantType) private readonly repo: Repository<PlantType>) {}
 
   findByName(name: string) {
     return this.repo.findOne({ where: { name } });

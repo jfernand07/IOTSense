@@ -2,9 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 // Centralized TypeORM configuration so AppModule stays lean
-export const databaseConfig = (
-  config: ConfigService,
-): TypeOrmModuleOptions => ({
+export const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',
   host: config.get<string>('DB_HOST'),
   port: Number(config.get<string>('DB_PORT')),

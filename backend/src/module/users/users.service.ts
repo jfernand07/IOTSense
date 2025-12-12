@@ -9,9 +9,7 @@ import { UserRole } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private readonly repo: Repository<User>,
-  ) {}
+  constructor(@InjectRepository(User) private readonly repo: Repository<User>) {}
 
   findByEmail(email: string) {
     return this.repo.findOne({ where: { email } });
