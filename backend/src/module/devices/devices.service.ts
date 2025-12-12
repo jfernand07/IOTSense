@@ -7,9 +7,7 @@ import { CreateDeviceDto } from './dto/create-device.dto';
 
 @Injectable()
 export class DevicesService {
-  constructor(
-    @InjectRepository(Device) private readonly repo: Repository<Device>,
-  ) {}
+  constructor(@InjectRepository(Device) private readonly repo: Repository<Device>) {}
 
   findByExternalId(externalId: string) {
     return this.repo.findOne({ where: { externalId } });

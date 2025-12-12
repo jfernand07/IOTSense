@@ -4,9 +4,9 @@ import { AiController } from './ai.controller';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [ConfigModule],
-    controllers: [AiController],
-    providers: [AiService],
-    exports: [AiService],
+  imports: [ConfigModule],
+  controllers: [AiController],
+  providers: [AiService],
+  exports: [AiService],
 })
-export class AiModule { }
+export class AiModule {}
