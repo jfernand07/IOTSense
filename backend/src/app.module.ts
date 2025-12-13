@@ -11,6 +11,7 @@ import { AlertsModule } from './module/alerts/alerts.module';
 import { RecommendationsModule } from './module/recommendations/recommendations.module';
 import { ReadingsModule } from './module/readings/readings.module';
 import { AiModule } from './ai/ai.module';
+import { AuthModule } from './module/auth/auth.module';
 import { databaseConfig } from './config/dataBase';
 
 @Module({
@@ -25,6 +26,7 @@ import { databaseConfig } from './config/dataBase';
       useFactory: databaseConfig,
     }),
 
+    AuthModule,
     UsersModule,
     PlantTypesModule,
     DevicesModule,

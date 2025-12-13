@@ -57,8 +57,44 @@ let UsersService = class UsersService {
     constructor(repo) {
         this.repo = repo;
     }
-    findByEmail(email) {
-        return this.repo.findOne({ where: { email } });
+    findByEmail(email, includePassword = false) {
+        if (includePassword) {
+            return this.repo.findOne({ where: { email } });
+        }
+        return this.repo.findOne({
+            where: { email },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                passwordHash: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
+    findById(id, includePassword = false) {
+        const select = {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            isActive: true,
+            createdAt: true,
+            updatedAt: true,
+        };
+        if (includePassword) {
+            select.passwordHash = true;
+        }
+        return this.repo.findOne({
+            where: { id },
+            select,
+        });
+    }
+    findByIdWithPassword(id) {
+        return this.repo.findOne({ where: { id } });
     }
     async create(dto) {
         const existing = await this.findByEmail(dto.email);

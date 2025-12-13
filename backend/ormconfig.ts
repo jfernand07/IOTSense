@@ -9,6 +9,7 @@ import { Plant } from './src/module/plants/entities/plant.entity';
 import { PlantType } from './src/module/plant-types/entities/plant-type.entity';
 import { Device } from './src/module/devices/entities/device.entity';
 import { Alert } from './src/module/alerts/entities/alert.entity';
+import { RefreshToken } from './src/module/auth/entities/refresh-token.entity';
 
 export default new DataSource({
     type: 'postgres',
@@ -17,6 +18,6 @@ export default new DataSource({
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    entities: [User, Sensor, SensorType, Recommendation, Reading, Plant, PlantType, Device, Alert],
+    entities: [User, Sensor, SensorType, Recommendation, Reading, Plant, PlantType, Device, Alert, RefreshToken],
     migrations: [ 'src/migrations/*.ts' ],
 });

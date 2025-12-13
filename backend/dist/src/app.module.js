@@ -20,6 +20,7 @@ const alerts_module_1 = require("./module/alerts/alerts.module");
 const recommendations_module_1 = require("./module/recommendations/recommendations.module");
 const readings_module_1 = require("./module/readings/readings.module");
 const ai_module_1 = require("./ai/ai.module");
+const auth_module_1 = require("./module/auth/auth.module");
 const dataBase_1 = require("./config/dataBase");
 let AppModule = class AppModule {
 };
@@ -35,6 +36,7 @@ exports.AppModule = AppModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: dataBase_1.databaseConfig,
             }),
+            auth_module_1.AuthModule,
             users_module_1.UsersModule,
             plant_types_module_1.PlantTypesModule,
             devices_module_1.DevicesModule,

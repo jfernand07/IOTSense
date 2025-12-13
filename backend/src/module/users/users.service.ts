@@ -11,8 +11,46 @@ import { UserRole } from './entities/user.entity';
 export class UsersService {
   constructor(@InjectRepository(User) private readonly repo: Repository<User>) {}
 
-  findByEmail(email: string) {
-    return this.repo.findOne({ where: { email } });
+  findByEmail(email: string, includePassword = false) {
+    if (includePassword) {
+      return this.repo.findOne({ where: { email } });
+    }
+    return this.repo.findOne({
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        passwordHash: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  findById(id: number, includePassword = false) {
+    const select: any = {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    };
+    if (includePassword) {
+      select.passwordHash = true;
+    }
+    return this.repo.findOne({
+      where: { id },
+      select,
+    });
+  }
+
+  findByIdWithPassword(id: number) {
+    return this.repo.findOne({ where: { id } });
   }
 
   async create(dto: CreateUserDto) {

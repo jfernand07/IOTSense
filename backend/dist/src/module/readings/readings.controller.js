@@ -16,6 +16,10 @@ exports.ReadingsController = void 0;
 const common_1 = require("@nestjs/common");
 const readings_service_1 = require("./readings.service");
 const create_reading_dto_1 = require("./dto/create-reading.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let ReadingsController = class ReadingsController {
     service;
     constructor(service) {
@@ -31,6 +35,7 @@ let ReadingsController = class ReadingsController {
 exports.ReadingsController = ReadingsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_reading_dto_1.CreateReadingDto]),
@@ -38,12 +43,14 @@ __decorate([
 ], ReadingsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ReadingsController.prototype, "findAll", null);
 exports.ReadingsController = ReadingsController = __decorate([
     (0, common_1.Controller)('readings'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [readings_service_1.ReadingsService])
 ], ReadingsController);
 //# sourceMappingURL=readings.controller.js.map
