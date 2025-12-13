@@ -16,6 +16,10 @@ exports.PlantTypesController = void 0;
 const common_1 = require("@nestjs/common");
 const plant_types_service_1 = require("./plant-types.service");
 const create_plant_type_dto_1 = require("./dto/create-plant-type.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let PlantTypesController = class PlantTypesController {
     service;
     constructor(service) {
@@ -31,6 +35,7 @@ let PlantTypesController = class PlantTypesController {
 exports.PlantTypesController = PlantTypesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_plant_type_dto_1.CreatePlantTypeDto]),
@@ -38,12 +43,14 @@ __decorate([
 ], PlantTypesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PlantTypesController.prototype, "findAll", null);
 exports.PlantTypesController = PlantTypesController = __decorate([
     (0, common_1.Controller)('plant-types'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [plant_types_service_1.PlantTypesService])
 ], PlantTypesController);
 //# sourceMappingURL=plant-types.controller.js.map

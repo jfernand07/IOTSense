@@ -16,6 +16,10 @@ exports.AlertsController = void 0;
 const common_1 = require("@nestjs/common");
 const alerts_service_1 = require("./alerts.service");
 const create_alert_dto_1 = require("./dto/create-alert.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let AlertsController = class AlertsController {
     service;
     constructor(service) {
@@ -31,6 +35,7 @@ let AlertsController = class AlertsController {
 exports.AlertsController = AlertsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_alert_dto_1.CreateAlertDto]),
@@ -38,12 +43,14 @@ __decorate([
 ], AlertsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AlertsController.prototype, "findAll", null);
 exports.AlertsController = AlertsController = __decorate([
     (0, common_1.Controller)('alerts'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [alerts_service_1.AlertsService])
 ], AlertsController);
 //# sourceMappingURL=alerts.controller.js.map

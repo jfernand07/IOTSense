@@ -14,14 +14,26 @@
    cd IOTSense/backend
    npm install
    ```
-3. Crear `.env` en `backend/`:
+3. Crear `.env` en `backend/` (puedes copiar desde `.env.example`):
    ```env
+   # Database Configuration
    DB_HOST=localhost
    DB_PORT=5432
    DB_USER=postgres
    DB_PASS=postgres
    DB_NAME=iotsense
    DB_SYNC=false  # false = migraciones; true = sync solo en local
+   
+   # Server Configuration
+   PORT=3002
+   
+   # JWT Configuration
+   JWT_SECRET=your-secret-key-change-in-production-make-it-long-and-random
+   JWT_EXPIRES_IN=15m
+   JWT_REFRESH_EXPIRES_IN_DAYS=7
+   
+   # OpenAI API Key (Optional - for AI features)
+   OPENAI_API_KEY=your-openai-api-key-here
    ```
 4. Crear la base de datos vacia (mismo nombre que `DB_NAME`):
    ```bash
