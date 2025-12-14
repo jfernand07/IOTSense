@@ -16,6 +16,10 @@ exports.DevicesController = void 0;
 const common_1 = require("@nestjs/common");
 const devices_service_1 = require("./devices.service");
 const create_device_dto_1 = require("./dto/create-device.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let DevicesController = class DevicesController {
     devicesService;
     constructor(devicesService) {
@@ -31,6 +35,7 @@ let DevicesController = class DevicesController {
 exports.DevicesController = DevicesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_device_dto_1.CreateDeviceDto]),
@@ -38,12 +43,14 @@ __decorate([
 ], DevicesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DevicesController.prototype, "findAll", null);
 exports.DevicesController = DevicesController = __decorate([
     (0, common_1.Controller)('devices'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [devices_service_1.DevicesService])
 ], DevicesController);
 //# sourceMappingURL=devices.controller.js.map

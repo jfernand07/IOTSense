@@ -1,5 +1,6 @@
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserRole } from './entities/user.entity';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
@@ -7,7 +8,7 @@ export declare class UsersController {
         id: number;
         name: string;
         email: string;
-        role: import("./entities/user.entity").UserRole;
+        role: UserRole;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
