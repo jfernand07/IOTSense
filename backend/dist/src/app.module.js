@@ -21,6 +21,7 @@ const recommendations_module_1 = require("./module/recommendations/recommendatio
 const readings_module_1 = require("./module/readings/readings.module");
 const ai_module_1 = require("./ai/ai.module");
 const dataBase_1 = require("./config/dataBase");
+const iot_module_1 = require("./module/iot/iot.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -45,6 +46,7 @@ exports.AppModule = AppModule = __decorate([
             recommendations_module_1.RecommendationsModule,
             readings_module_1.ReadingsModule,
             ai_module_1.AiModule,
+            iot_module_1.IotModule,
         ],
     })
 ], AppModule);

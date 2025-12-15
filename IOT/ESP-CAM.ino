@@ -6,12 +6,12 @@
 // -------------------
 // Configuración WiFi
 // -------------------
-const char* ssid = "Ledezma_2.4";
-const char* password = "1017195053*";
+const char* ssid = "Aifon de Jackson";
+const char* password = "Jolier0211";
 
 // URL de tu backend público (Cloudflare Tunnel o Render)
-const char* backendRegisterUrl = "http://192.168.1.13:3000/api/camera/register";
-const char* backendControlUrl  = "http://192.168.1.13:3000/api/camera/control"; // Endpoint para consultar estado
+const char* backendRegisterUrl = "https://iot-prueba.onrender.com/api/camera/register";
+const char* backendControlUrl  = "https://iot-prueba.onrender.com/api/camera/control"; // Endpoint para consultar estado
 
 // -------------------
 // Servidor web local

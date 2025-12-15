@@ -12,6 +12,7 @@ import { RecommendationsModule } from './module/recommendations/recommendations.
 import { ReadingsModule } from './module/readings/readings.module';
 import { AiModule } from './ai/ai.module';
 import { databaseConfig } from './config/dataBase';
+import { IotModule } from './module/iot/iot.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { databaseConfig } from './config/dataBase';
     RecommendationsModule,
     ReadingsModule,
     AiModule,
+    IotModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

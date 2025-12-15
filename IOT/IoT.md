@@ -5,194 +5,306 @@
 
 ## 1. Descripción del Proyecto
 
-Sistema IoT para monitoreo ambiental y transmisión de video en tiempo real:
+Sistema IoT para monitoreo ambiental, control remoto y transmisión de video en tiempo real.
 
-* **ESP32 principal**: sensores de temperatura y humedad, envía datos al backend.
-* **ESP32-CAM**: captura imágenes, streaming MJPEG, control digital activable/desactivable.
-* **Backend Node.js**: recibe datos, registra cámara, controla streaming, expone endpoints accesibles públicamente.
+Componentes principales:
 
-Objetivo: Automatización completa, datos accesibles desde un frontend web, escalable a producción.
+* **ESP32 principal**
+  Lectura de sensores ambientales y de suelo. Comunicación periódica con el backend.
+
+* **ESP32-CAM**
+  Captura de video y streaming MJPEG, controlado digitalmente desde el backend (sin botones físicos).
+
+* **Backend Node.js (Express)**
+  Punto central del sistema. Recibe datos, registra la cámara, controla el streaming, gestiona actuadores (LED) y expone una API para la página web.
+
+Objetivo:
+Disponer de un sistema IoT completamente controlable desde una interfaz web, con arquitectura clara y escalable.
 
 ---
 
 ## 2. Arquitectura del Sistema
 
 ```
-[ESP32 Sensores] ---> WiFi ---> [Backend Node.js] ---> [Web App / Página Pública]
-[ESP32-CAM] -------> WiFi ---> [Backend Node.js] ---> [Web App / Página Pública]
+[ESP32 Sensores] ---> WiFi ---> [Backend Node.js] ---> [Web App]
+[ESP32-CAM] -------> WiFi ---> [Backend Node.js] ---> [Web App]
 ```
 
-### Diagrama de Flujo de Datos y Control Digital
+El backend actúa como:
 
-```
-ESP32-CAM                     Backend Node.js                      Frontend Web
-+----------------+            +----------------+                   +----------------+
-| Captura frames | -->HTTP--> | Registro IP    |                   | <img src=...>  |
-| Streaming OFF/ON <-control- | StreamingAct.  | <--fetch-------- | Botón digital  |
-+----------------+            +----------------+                   +----------------+
-```
-
-* Backend mantiene variable `streamingActivo`.
-* Frontend puede activar/desactivar streaming sin hardware.
-* Streaming MJPEG es proxy desde ESP32-CAM.
+* Receptor de datos
+* Proxy de streaming
+* Controlador digital de dispositivos
+* Fuente única de verdad del sistema
 
 ---
 
-## 3. Hardware
+## 3. Flujo de Datos y Control Digital
 
-### 3.1 ESP32 principal
+```
+ESP32-CAM                     Backend Node.js                     Frontend Web
++----------------+            +----------------------+            +-------------------+
+| Captura video  | --HTTP-->  | Proxy MJPEG          | --> <img>  | Vista en navegador |
+| Stream ON/OFF  | <-poll-    | streamingActivo     | <-fetch-- | Botón digital      |
++----------------+            +----------------------+            +-------------------+
+```
 
-* Sensores:
+Puntos clave:
 
-  * **DHT11**: temperatura y humedad ambiente.
-  * **DS18B20**: temperatura del suelo.
-  * **Humedad del suelo**: pin analógico.
-* OLED I2C (`SDA = 22`, `SCL = 21`).
-
-### 3.2 ESP32-CAM
-
-* Pines AI Thinker: PWDN=32, RESET=-1, XCLK=0, SIOD=26, SIOC=27, D0-D7=5-39, VSYNC=25, HREF=23, PCLK=22.
-* PSRAM: streaming VGA o QVGA.
-* Streaming digitalmente controlable.
-
-### 3.3 Alimentación
-
-* 5V, GND común.
-* Fuente dedicada recomendada para ESP32-CAM.
+* El backend mantiene la variable `streamingActivo`
+* El frontend controla el estado mediante endpoints REST
+* La ESP32-CAM no expone streaming público directamente
+* El streaming pasa siempre por el backend
 
 ---
 
-## 4. Código ESP32 (Sensores)
+## 4. Hardware
 
-* Inicializa sensores y OLED.
-* Lee y procesa datos de humedad y temperatura.
-* Envía datos al backend vía HTTP POST.
-* Reconexión WiFi automática.
-* Intervalo configurable.
+### 4.1 ESP32 principal (Sensores)
 
-### Diagrama de Flujo Sensores
+Sensores utilizados:
+
+* **DHT11**: temperatura y humedad ambiente
+* **DS18B20**: temperatura del suelo
+* **Sensor de humedad del suelo**: entrada analógica
+
+Periféricos:
+
+* Pantalla OLED I2C
+
+  * SDA: GPIO 22
+  * SCL: GPIO 21
+
+Funciones:
+
+* Lectura periódica de sensores
+* Envío de datos al backend vía HTTP POST
+* Reconexión automática a WiFi
+
+---
+
+### 4.2 ESP32-CAM
+
+Modelo: AI Thinker
+
+Pines principales:
+
+* PWDN: 32
+* RESET: -1
+* XCLK: 0
+* SIOD: 26
+* SIOC: 27
+* VSYNC: 25
+* HREF: 23
+* PCLK: 22
+* D0-D7: 5, 18, 19, 21, 36, 39, 34, 35
+
+Características:
+
+* PSRAM habilitada
+* Streaming MJPEG en `/stream`
+* Control digital de streaming desde backend
+* Resolución recomendada: QVGA o VGA
+
+---
+
+### 4.3 Actuadores
+
+* **LED digital**
+
+  * Controlado desde backend
+  * Estado ON/OFF
+  * La ESP32 consulta el estado vía HTTP
+
+---
+
+## 5. Código ESP32 (Sensores)
+
+Funciones principales:
+
+* Inicialización de sensores y OLED
+* Lectura y validación de datos
+* Visualización local
+* Envío periódico al backend
+* Reconexión automática si se pierde WiFi
+
+Flujo:
 
 ```
-[ESP32 Sensores] 
-      |
-      v
-  Leer sensores
-      |
-      v
-  Procesar datos
-      |
-      v
-  Mostrar OLED
-      |
-      v
-  Enviar a Backend
-      |
-      v
-  Reintentar si WiFi cae
+Inicializar
+   |
+Leer sensores
+   |
+Mostrar en OLED
+   |
+Enviar POST al backend
+   |
+Esperar intervalo
+   |
+Reintentar si WiFi cae
 ```
 
 ---
 
-## 5. Código ESP32-CAM (Streaming)
+## 6. Código ESP32-CAM (Streaming)
 
-* Inicializa cámara y WiFi.
-* Registro de IP y endpoint en backend.
-* Streaming MJPEG en `/stream`.
-* Activable/desactivable desde backend.
-* FPS ajustable con `delay(50)`.
+Funciones principales:
 
-### Diagrama de Control Digital Streaming
+* Inicialización de cámara y WiFi
+* Registro dinámico en el backend
+* Servidor MJPEG en `/stream`
+* Activación o bloqueo de streaming según backend
+
+Control digital:
 
 ```
-Frontend Web
+ESP32-CAM
    |
-   v
-POST /api/camera/control { streamingActivo: true/false }
+GET /api/camera/control
    |
-   v
-Backend Node.js
+¿streaming = true?
    |
-   v
-Actualizar streamingActivo
-   |
-   v
-ESP32-CAM: stream ON/OFF según variable
+Si -> enviar frames
+No -> pausar streaming
 ```
+
+No se usan botones físicos. Todo el control es remoto y digital.
 
 ---
 
-## 6. Backend Node.js
+## 7. Backend Node.js
 
-### Endpoints
+### 7.1 Estado en Memoria
 
-* Sensores:
+Variables principales:
 
-```text
+* `lastSensorData`
+* `cameraInfo`
+* `streamingActivo`
+* `ledState`
+
+El backend es el único que decide:
+
+* Si la cámara puede streamear
+* Si el LED está encendido o apagado
+
+---
+
+### 7.2 Endpoints disponibles
+
+#### Sensores
+
+```
 POST /api/sensors
 GET  /api/sensors/latest
 ```
 
-* Cámara:
+#### Cámara
 
-```text
+```
 POST /api/camera/register
 GET  /api/camera/stream
 GET  /api/camera/control
 POST /api/camera/control
 ```
 
-* Estado general:
+#### LED
 
-```text
+```
+POST /api/led
+GET  /api/led
+```
+
+#### Estado general
+
+```
 GET /api/status
-```
-
-### Diagrama de Flujo Backend
-
-```
-[ESP32] POST /api/sensors ---> Backend ---> Almacena datos
-[ESP32-CAM] POST /api/camera/register ---> Backend ---> Registra IP/endpoint
-Frontend GET /api/camera/stream ---> Backend ---> Proxy MJPEG desde ESP32-CAM
-Frontend POST /api/camera/control ---> Backend ---> Cambia streamingActivo
 ```
 
 ---
 
-## 7. Página Web / Frontend
+### 7.3 Flujo Backend
 
-* Consume datos de `/api/sensors/latest`.
-* Streaming con `<img src="https://TU_BACKEND_PUBLICO/api/camera/stream">`.
-* Botón digital activa/desactiva streaming:
+```
+ESP32           -> POST /api/sensors          -> Backend guarda último dato
+ESP32-CAM       -> POST /api/camera/register -> Backend registra IP
+Frontend        -> POST /api/camera/control  -> Backend activa streaming
+Frontend        -> GET  /api/camera/stream   -> Backend hace proxy MJPEG
+ESP32           -> GET  /api/led              -> Backend responde estado LED
+```
+
+---
+
+## 8. Frontend / Página Web
+
+Funciones principales:
+
+* Mostrar datos ambientales
+* Visualizar streaming MJPEG
+* Controlar streaming con botón digital
+* Encender/apagar LED remotamente
+
+Ejemplo streaming:
+
+```html
+<img src="http://IP_BACKEND:3000/api/camera/stream">
+```
+
+Ejemplo control de streaming:
 
 ```js
 fetch("/api/camera/control", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ streamingActivo: true }) // o false
+  body: JSON.stringify({ streaming: true })
 });
 ```
 
-* Dashboard en tiempo real: gráficas, alertas y control remoto.
+Ejemplo control LED:
+
+```js
+fetch("/api/led", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ state: true })
+});
+```
 
 ---
 
-## 8. Escalabilidad y Mejoras Futuras
+## 9. Streaming: Estado Actual
 
-1. **Seguridad**: API Keys, JWT, HTTPS obligatorio.
-2. **MQTT**: baja latencia y confiabilidad.
-3. **Persistencia**: MongoDB o PostgreSQL para histórico de datos.
-4. **Monitoreo**: dashboard completo con alertas.
-5. **Control remoto**: streaming y sensores activables digitalmente.
-6. **QoS y Reconexión**: garantizar continuidad de datos y streaming.
+* El streaming funciona **de forma local**
+* Backend y ESP32-CAM deben estar en la misma red
+* El backend actúa como intermediario
+* Para exposición pública se requiere:
+
+  * Tunnel (Cloudflare)
+  * VPS
+  * O red fija
+
+El diseño ya está preparado para eso, aunque actualmente se usa local.
 
 ---
 
-## 9. Recomendaciones
+## 10. Escalabilidad y Mejoras Futuras
 
-* Mantener GND común.
-* Fuente estable de 5V para ESP32-CAM.
-* Actualizar credenciales WiFi o usar WiFi Manager.
-* Backend público con Cloudflare Tunnel o Render.
-* Streaming controlado digitalmente.
+1. Persistencia de datos (MongoDB / PostgreSQL)
+2. MQTT para sensores y actuadores
+3. WebSockets para estado en tiempo real
+4. Autenticación (JWT, API Keys)
+5. HTTPS obligatorio
+6. Gestión de múltiples cámaras
+7. Control de más actuadores (relés, motores)
+
+---
+
+## 11. Recomendaciones Técnicas
+
+* Fuente estable de 5V para ESP32-CAM
+* GND común entre dispositivos
+* Manejo de reconexión WiFi en ambos ESP32
+* Backend como único punto de acceso
+* No exponer directamente la IP de la ESP32-CAM
 
 ---
