@@ -10,14 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
+const swagger_1 = require("@nestjs/swagger");
 const create_user_dto_1 = require("./create-user.dto");
 const class_validator_1 = require("class-validator");
-class UpdateUserDto extends (0, mapped_types_1.PartialType)(create_user_dto_1.CreateUserDto) {
+const swagger_2 = require("@nestjs/swagger");
+class UpdateUserDto extends (0, swagger_1.PartialType)(create_user_dto_1.CreateUserDto) {
     password;
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
+    (0, swagger_2.ApiPropertyOptional)({ example: 'NuevaClave456' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),

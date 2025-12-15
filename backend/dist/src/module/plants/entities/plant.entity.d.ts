@@ -1,15 +1,12 @@
-import { PlantType } from '../../plant-types/entities/plant-type.entity';
 import { User } from '../../users/entities/user.entity';
+import { Device } from '../../devices/entities/device.entity';
 export declare class Plant {
     id: number;
-    plantType: PlantType;
-    owner: User;
     name: string;
-    location?: string | null;
-    datePlanted?: string | null;
-    isActive: boolean;
-    notes?: string | null;
-    imageUrl?: string | null;
+    species: string;
+    description: string;
     createdAt: Date;
     updatedAt: Date;
+    owner: User;
+    devices: Device[];
 }

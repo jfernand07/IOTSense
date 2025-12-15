@@ -11,33 +11,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("../entities/user.entity");
 class CreateUserDto {
     name;
     email;
     password;
     role;
+    isActive;
 }
 exports.CreateUserDto = CreateUserDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ana López' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(2),
     (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ana.lopez@example.com' }),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "email", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Secreta123' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "password", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: user_entity_1.UserRole, example: user_entity_1.UserRole.USER }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(user_entity_1.UserRole),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(Boolean),
+    __metadata("design:type", Boolean)
+], CreateUserDto.prototype, "isActive", void 0);
 //# sourceMappingURL=create-user.dto.js.map

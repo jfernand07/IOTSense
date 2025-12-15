@@ -5,52 +5,36 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
-
-import { PlantType } from '../../plant-types/entities/plant-type.entity';
 import { User } from '../../users/entities/user.entity';
+import { Device } from '../../devices/entities/device.entity';
 
-@Entity({ name: 'plant' })
+@Entity('plants')
 export class Plant {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => PlantType, (pt) => pt.plants, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'plant_type_id' })
-  plantType: PlantType;
-
-  @ManyToOne(() => User, (u) => u.plants, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'owner_user_id' })
-  owner: User;
-
-  @Column({ name: 'name', type: 'varchar', length: 100 })
+  @Column()
   name: string;
 
-  @Column({ name: 'location', type: 'varchar', length: 255, nullable: true })
-  location?: string | null;
+  @Column()
+  species: string;
 
-  @Column({ name: 'date_planted', type: 'date', nullable: true })
-  datePlanted?: string | null; // date en Postgres => string YYYY-MM-DD
+  @Column({ type: 'text' })
+  description: string;
 
-  @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
-
-  @Column({ name: 'notes', type: 'text', nullable: true })
-  notes?: string | null;
-
-  @Column({ name: 'image_url', type: 'text', nullable: true })
-  imageUrl?: string | null;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.plants, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  owner: User;
+
+  @OneToMany(() => Device, (device) => device.plant)
+  devices: Device[];
 }

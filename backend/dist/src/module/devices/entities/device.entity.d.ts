@@ -1,16 +1,12 @@
-export declare enum DeviceStatus {
-    ONLINE = "ONLINE",
-    OFFLINE = "OFFLINE",
-    ERROR = "ERROR"
-}
+import { Plant } from '../../plants/entities/plant.entity';
+import { Sensor } from '../../sensors/entities/sensor.entity';
 export declare class Device {
     id: number;
     name: string;
-    externalId: string;
-    description?: string | null;
-    status: DeviceStatus;
-    location?: string | null;
-    lastSeenAt?: Date | null;
+    location: string;
+    hasCamera: boolean;
+    isActive: boolean;
     createdAt: Date;
-    updatedAt: Date;
+    plant: Plant;
+    sensors: Sensor[];
 }

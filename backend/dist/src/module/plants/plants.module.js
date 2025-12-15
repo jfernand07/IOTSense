@@ -13,13 +13,12 @@ const plant_entity_1 = require("./entities/plant.entity");
 const plants_controller_1 = require("./plants.controller");
 const plants_service_1 = require("./plants.service");
 const user_entity_1 = require("../users/entities/user.entity");
-const plant_type_entity_1 = require("../plant-types/entities/plant-type.entity");
 let PlantsModule = class PlantsModule {
 };
 exports.PlantsModule = PlantsModule;
 exports.PlantsModule = PlantsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([plant_entity_1.Plant, user_entity_1.User, plant_type_entity_1.PlantType])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([plant_entity_1.Plant, user_entity_1.User])],
         controllers: [plants_controller_1.PlantsController],
         providers: [plants_service_1.PlantsService],
     })

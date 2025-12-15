@@ -12,71 +12,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sensor = void 0;
 const typeorm_1 = require("typeorm");
 const device_entity_1 = require("../../devices/entities/device.entity");
-const sensor_type_entity_1 = require("../../sensor-types/entities/sensor-type.entity");
-const plant_entity_1 = require("../../plants/entities/plant.entity");
+const sensor_current_state_entity_1 = require("./sensor-current-state.entity");
 let Sensor = class Sensor {
     id;
-    device;
-    sensorType;
-    plant;
-    name;
-    externalId;
-    pin;
-    calibrationOffset;
+    type;
+    unit;
     isActive;
     createdAt;
-    updatedAt;
+    device;
+    currentState;
 };
 exports.Sensor = Sensor;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)({ type: 'int', name: 'id' }),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Sensor.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => device_entity_1.Device, { onDelete: 'RESTRICT', onUpdate: 'CASCADE' }),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Sensor.prototype, "type", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], Sensor.prototype, "unit", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], Sensor.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamptz' }),
+    __metadata("design:type", Date)
+], Sensor.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => device_entity_1.Device, (device) => device.sensors, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'device_id' }),
     __metadata("design:type", device_entity_1.Device)
 ], Sensor.prototype, "device", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => sensor_type_entity_1.SensorType, { onDelete: 'RESTRICT', onUpdate: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'sensor_type_id' }),
-    __metadata("design:type", sensor_type_entity_1.SensorType)
-], Sensor.prototype, "sensorType", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => plant_entity_1.Plant, { nullable: true, onDelete: 'SET NULL', onUpdate: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'plant_id' }),
-    __metadata("design:type", Object)
-], Sensor.prototype, "plant", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ name: 'name', type: 'varchar', length: 100 }),
-    __metadata("design:type", String)
-], Sensor.prototype, "name", void 0);
-__decorate([
-    (0, typeorm_1.Index)({ unique: true }),
-    (0, typeorm_1.Column)({ name: 'external_id', type: 'varchar', length: 100 }),
-    __metadata("design:type", String)
-], Sensor.prototype, "externalId", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ name: 'pin', type: 'varchar', length: 10, nullable: true }),
-    __metadata("design:type", Object)
-], Sensor.prototype, "pin", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ name: 'calibration_offset', type: 'numeric', precision: 6, scale: 3, default: 0 }),
-    __metadata("design:type", String)
-], Sensor.prototype, "calibrationOffset", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ name: 'is_active', type: 'boolean', default: true }),
-    __metadata("design:type", Boolean)
-], Sensor.prototype, "isActive", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)({ name: 'created_at', type: 'timestamptz' }),
-    __metadata("design:type", Date)
-], Sensor.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at', type: 'timestamptz' }),
-    __metadata("design:type", Date)
-], Sensor.prototype, "updatedAt", void 0);
+    (0, typeorm_1.OneToOne)(() => sensor_current_state_entity_1.SensorCurrentState, (state) => state.sensor, { cascade: true }),
+    __metadata("design:type", sensor_current_state_entity_1.SensorCurrentState)
+], Sensor.prototype, "currentState", void 0);
 exports.Sensor = Sensor = __decorate([
-    (0, typeorm_1.Entity)({ name: 'sensor' })
+    (0, typeorm_1.Entity)('sensors')
 ], Sensor);
 //# sourceMappingURL=sensor.entity.js.map

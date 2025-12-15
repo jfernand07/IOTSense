@@ -10,40 +10,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDeviceDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const device_entity_1 = require("../entities/device.entity");
+const class_transformer_1 = require("class-transformer");
 class CreateDeviceDto {
     name;
-    externalId;
-    description;
-    status;
     location;
+    plantId;
+    hasCamera;
+    isActive;
 }
 exports.CreateDeviceDto = CreateDeviceDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Dispositivo A1' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
 ], CreateDeviceDto.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(200),
-    __metadata("design:type", String)
-], CreateDeviceDto.prototype, "externalId", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateDeviceDto.prototype, "description", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(device_entity_1.DeviceStatus),
-    __metadata("design:type", String)
-], CreateDeviceDto.prototype, "status", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiProperty)({ example: 'Estante superior' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateDeviceDto.prototype, "location", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 5, description: 'ID de la planta asociada' }),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreateDeviceDto.prototype, "plantId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateDeviceDto.prototype, "hasCamera", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateDeviceDto.prototype, "isActive", void 0);
 //# sourceMappingURL=create-device.dto.js.map

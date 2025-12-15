@@ -2,13 +2,10 @@ import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { User } from './src/module/users/entities/user.entity';
 import { Sensor } from './src/module/sensors/entities/sensor.entity';
-import { SensorType } from './src/module/sensor-types/entities/sensor-type.entity';
-import { Recommendation } from './src/module/recommendations/entities/recommendation.entity';
-import { Reading } from './src/module/readings/entities/reading.entity';
+import { SensorCurrentState } from './src/module/sensors/entities/sensor-current-state.entity';
+import { SensorThreshold } from './src/module/sensors/entities/sensor-threshold.entity';
 import { Plant } from './src/module/plants/entities/plant.entity';
-import { PlantType } from './src/module/plant-types/entities/plant-type.entity';
 import { Device } from './src/module/devices/entities/device.entity';
-import { Alert } from './src/module/alerts/entities/alert.entity';
 import { RefreshToken } from './src/module/auth/entities/refresh-token.entity';
 
 export default new DataSource({
@@ -18,6 +15,6 @@ export default new DataSource({
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    entities: [User, Sensor, SensorType, Recommendation, Reading, Plant, PlantType, Device, Alert, RefreshToken],
+    entities: [User, Sensor, SensorCurrentState, SensorThreshold, Plant, Device, RefreshToken],
     migrations: [ 'src/migrations/*.ts' ],
 });

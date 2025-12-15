@@ -1,10 +1,6 @@
 export declare class CreateSensorDto {
     deviceId: number;
-    sensorTypeId: number;
-    plantId?: number;
-    name: string;
-    externalId: string;
-    pin?: string;
-    calibrationOffset?: number;
+    type: string;
+    unit: number;
     isActive?: boolean;
 }

@@ -14,6 +14,8 @@ export declare class UsersService {
         email: string;
         role: UserRole;
         isActive: boolean;
+        refresh_token_hash: string | null;
+        acces_token: string | null;
         createdAt: Date;
         updatedAt: Date;
         plants: import("../plants/entities/plant.entity").Plant[];

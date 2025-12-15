@@ -10,58 +10,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePlantDto = void 0;
-const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 class CreatePlantDto {
     name;
+    species;
+    description;
     ownerUserId;
-    plantTypeId;
-    location;
-    datePlanted;
-    isActive;
-    notes;
-    imageUrl;
 }
 exports.CreatePlantDto = CreatePlantDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ficus de la oficina' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
 ], CreatePlantDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ficus benjamina' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], CreatePlantDto.prototype, "species", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Planta ubicada en la ventana principal' }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreatePlantDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: 12,
+        description: 'ID del usuario propietario de la planta',
+    }),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], CreatePlantDto.prototype, "ownerUserId", void 0);
-__decorate([
-    (0, class_transformer_1.Type)(() => Number),
-    (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
-], CreatePlantDto.prototype, "plantTypeId", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(255),
-    __metadata("design:type", String)
-], CreatePlantDto.prototype, "location", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], CreatePlantDto.prototype, "datePlanted", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreatePlantDto.prototype, "isActive", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreatePlantDto.prototype, "notes", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreatePlantDto.prototype, "imageUrl", void 0);
 //# sourceMappingURL=create-plant.dto.js.map

@@ -11,14 +11,9 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("./module/users/users.module");
 const config_1 = require("@nestjs/config");
-const plant_types_module_1 = require("./module/plant-types/plant-types.module");
 const devices_module_1 = require("./module/devices/devices.module");
-const sensor_types_module_1 = require("./module/sensor-types/sensor-types.module");
 const plants_module_1 = require("./module/plants/plants.module");
 const sensors_module_1 = require("./module/sensors/sensors.module");
-const alerts_module_1 = require("./module/alerts/alerts.module");
-const recommendations_module_1 = require("./module/recommendations/recommendations.module");
-const readings_module_1 = require("./module/readings/readings.module");
 const ai_module_1 = require("./ai/ai.module");
 const auth_module_1 = require("./module/auth/auth.module");
 const dataBase_1 = require("./config/dataBase");
@@ -38,14 +33,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
-            plant_types_module_1.PlantTypesModule,
             devices_module_1.DevicesModule,
-            sensor_types_module_1.SensorTypesModule,
             plants_module_1.PlantsModule,
             sensors_module_1.SensorsModule,
-            alerts_module_1.AlertsModule,
-            recommendations_module_1.RecommendationsModule,
-            readings_module_1.ReadingsModule,
             ai_module_1.AiModule,
         ],
     })

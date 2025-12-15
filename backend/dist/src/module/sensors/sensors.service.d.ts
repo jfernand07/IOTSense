@@ -1,17 +1,17 @@
 import { Repository } from 'typeorm';
 import { Sensor } from './entities/sensor.entity';
-import { CreateSensorDto } from './dto/create-sensor.dto';
 import { Device } from '../devices/entities/device.entity';
-import { SensorType } from '../sensor-types/entities/sensor-type.entity';
-import { Plant } from '../plants/entities/plant.entity';
-import { SensorListItemDto } from './dto/sensor-list-item.dto';
+import { CreateSensorDto } from './dto/create-sensor.dto';
+import { UpdateSensorDto } from './dto/update-sensor.dto';
 export declare class SensorsService {
     private readonly sensorRepo;
     private readonly deviceRepo;
-    private readonly sensorTypeRepo;
-    private readonly plantRepo;
-    constructor(sensorRepo: Repository<Sensor>, deviceRepo: Repository<Device>, sensorTypeRepo: Repository<SensorType>, plantRepo: Repository<Plant>);
-    findByExternalId(externalId: string): Promise<Sensor | null>;
+    constructor(sensorRepo: Repository<Sensor>, deviceRepo: Repository<Device>);
     create(dto: CreateSensorDto): Promise<Sensor>;
-    findAll(): Promise<SensorListItemDto[]>;
+    findAll(): Promise<Sensor[]>;
+    findOne(id: number): Promise<Sensor | null>;
+    update(id: number, dto: UpdateSensorDto): Promise<Sensor>;
+    remove(id: number): Promise<{
+        message: string;
+    }>;
 }

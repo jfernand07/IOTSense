@@ -1,10 +1,6 @@
 export declare class CreatePlantDto {
     name: string;
+    species: string;
+    description: string;
     ownerUserId: number;
-    plantTypeId: number;
-    location?: string;
-    datePlanted?: string;
-    isActive?: boolean;
-    notes?: string;
-    imageUrl?: string;
 }

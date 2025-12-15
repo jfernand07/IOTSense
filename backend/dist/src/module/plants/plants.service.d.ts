@@ -1,14 +1,17 @@
 import { Repository } from 'typeorm';
 import { Plant } from './entities/plant.entity';
 import { CreatePlantDto } from './dto/create-plant.dto';
+import { UpdatePlantDto } from './dto/update-plant.dto';
 import { User } from '../users/entities/user.entity';
-import { PlantType } from '../plant-types/entities/plant-type.entity';
-import { PlantListItemDto } from './dto/plant-list-item.dto';
 export declare class PlantsService {
     private readonly plantRepo;
     private readonly userRepo;
-    private readonly plantTypeRepo;
-    constructor(plantRepo: Repository<Plant>, userRepo: Repository<User>, plantTypeRepo: Repository<PlantType>);
+    constructor(plantRepo: Repository<Plant>, userRepo: Repository<User>);
     create(dto: CreatePlantDto): Promise<Plant>;
-    findAll(): Promise<PlantListItemDto[]>;
+    findAll(): Promise<Plant[]>;
+    findOne(id: number): Promise<Plant>;
+    update(id: number, dto: UpdatePlantDto): Promise<Plant>;
+    remove(id: number): Promise<{
+        message: string;
+    }>;
 }

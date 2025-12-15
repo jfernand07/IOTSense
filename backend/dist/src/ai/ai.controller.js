@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const ai_service_1 = require("./ai.service");
 let AiController = class AiController {
     aiService;
@@ -27,12 +28,15 @@ let AiController = class AiController {
 exports.AiController = AiController;
 __decorate([
     (0, common_1.Post)('detectar-anomalias'),
+    (0, swagger_1.ApiOperation)({ summary: 'Detectar anomalías en lecturas' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Resultado del análisis de IA.' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "detectAnomalies", null);
 exports.AiController = AiController = __decorate([
+    (0, swagger_1.ApiTags)('IA'),
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [ai_service_1.AiService])
 ], AiController);

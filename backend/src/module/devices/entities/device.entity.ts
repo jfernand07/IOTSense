@@ -1,43 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Plant } from '../../plants/entities/plant.entity';
+import { Sensor } from '../../sensors/entities/sensor.entity';
 
-export enum DeviceStatus {
-  ONLINE = 'ONLINE',
-  OFFLINE = 'OFFLINE',
-  ERROR = 'ERROR',
-}
-
-@Entity({ name: 'device' })
+@Entity('devices')
 export class Device {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'name', type: 'varchar', length: 100 })
+  @Column()
   name: string;
 
-  @Index({ unique: true })
-  @Column({ name: 'external_id', type: 'varchar', length: 100 })
-  externalId: string;
+  @Column()
+  location: string;
 
-  @Column({ name: 'description', type: 'text', nullable: true })
-  description?: string | null;
+  @Column({ default: false })
+  hasCamera: boolean;
 
-  @Column({
-    name: 'status',
-    type: 'enum',
-    enum: DeviceStatus,
-    default: DeviceStatus.OFFLINE,
-  })
-  status: DeviceStatus;
+  @Column({ default: true })
+  isActive: boolean;
 
-  @Column({ name: 'location', type: 'varchar', length: 255, nullable: true })
-  location?: string | null;
-
-  @Column({ name: 'last_seen_at', type: 'timestamptz', nullable: true })
-  lastSeenAt?: Date | null;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-  updatedAt: Date;
+  @ManyToOne(() => Plant, (plant) => plant.devices, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'plant_id' })
+  plant: Plant;
+
+  @OneToMany(() => Sensor, (sensor) => sensor.device)
+  sensors: Sensor[];
 }
