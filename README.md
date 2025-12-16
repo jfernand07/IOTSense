@@ -94,6 +94,181 @@ El fin es proporcionar a los usuarios un panorama claro y estadístico para el c
 
 ---
 
+## 🤖 Módulo de Inteligencia Artificial (Backend NestJS)
+
+El módulo de IA integra capacidades de análisis inteligente mediante OpenAI GPT para proporcionar diagnóstico avanzado y recomendaciones automatizadas basadas en los datos de sensores.
+
+### 📋 Historias de Usuario Implementadas
+
+#### **HU-1: Detección de Anomalías**
+
+**Objetivo:** Configurar el asistente IA en el backend para detectar anomalías en las mediciones de sensores, validar falsos positivos mediante reanálisis y registrar las anomalías detectadas.
+
+**Endpoint:** `POST /ai/detectar-anomalias`
+
+**Body (JSON):**
+```json
+{
+  "temp_ambiente": 26.3,
+  "hum_ambiente": 51,
+  "hum_suelo": 0,
+  "temp_suelo": 25.06,
+  "timestamp": "2025-12-15T15:09:48.174Z",
+  "lastValues": [
+    {
+      "temp_ambiente": 25.8,
+      "hum_ambiente": 52,
+      "hum_suelo": 15,
+      "temp_suelo": 24.5,
+      "timestamp": "2025-12-15T14:09:48.174Z"
+    }
+  ],
+  "idealRanges": "Temp ambiente: 22-26°C, Hum ambiente: 50-60%, Hum suelo: 20-40%",
+  "plantId": 1,
+  "sensorId": 1
+}
+```
+
+**Respuesta:**
+```json
+{
+  "anomalia": true,
+  "tipo": "anomalía_sensor",
+  "descripcion": "La humedad del suelo está en 0%, lo que indica posible falla del sensor o suelo extremadamente seco.",
+  "accion": "Verificar el sensor de humedad del suelo y considerar riego inmediato si la lectura es correcta.",
+  "severidad": 4,
+  "reanalizado": false,
+  "falsoPositivo": false
+}
+```
+
+**Características:**
+-  Análisis inteligente con prompt especializado en salud de plantas
+-  Validación de falsos positivos mediante comparación estadística con histórico
+-  Reanálisis automático cuando se detecta posible falso positivo
+-  Registro automático de anomalías como alertas en la base de datos (si se proporciona `plantId`)
+
+---
+
+#### **HU-2: Recomendaciones Automáticas**
+
+**Objetivo:** Generar recomendaciones automáticas combinando reglas estáticas definidas por expertos agrónomos con análisis de IA, y registrar las recomendaciones para su seguimiento.
+
+**Endpoint:** `POST /ai/recomendaciones`
+
+**Body (JSON):** Misma estructura que `detectar-anomalias`
+
+**Respuesta:**
+```json
+{
+  "recomendaciones": [
+    {
+      "mensaje": "La humedad del suelo es crítica (0%). Iniciar riego por goteo durante 10-15 minutos de inmediato.",
+      "prioridad": 5,
+      "tipo": "riego"
+    },
+    {
+      "mensaje": "La temperatura ambiente está dentro del rango óptimo. Mantener condiciones actuales.",
+      "prioridad": 2,
+      "tipo": "clima"
+    },
+    {
+      "mensaje": "Considerar aplicar fertilizante rico en nitrógeno si la planta muestra signos de deficiencia nutricional.",
+      "prioridad": 3,
+      "tipo": "nutricion"
+    }
+  ]
+}
+```
+
+**Tipos de recomendaciones:**
+- `riego`: Relacionadas con humedad del suelo y riego
+- `clima`: Temperatura y humedad ambiental
+- `nutricion`: Fertilización y nutrientes
+- `plaga`: Detección de plagas o enfermedades
+- `otro`: Otras recomendaciones generales
+
+**Características:**
+-  Motor de reglas estáticas basado en umbrales (ej: `hum_suelo < 20` → alerta de riego)
+-  Análisis de IA que evalúa y enriquece las recomendaciones de reglas
+-  Priorización automática (1-5, donde 5 es más urgente)
+-  Registro automático en base de datos si se proporciona `plantId`
+
+**Reglas implementadas:**
+- Humedad suelo < 20% → Recomendación urgente de riego (prioridad 5)
+- Temperatura ambiente > 30°C → Recomendación de sombra/ventilación (prioridad 4)
+- Humedad ambiente < 30% → Recomendación de aumentar humedad relativa (prioridad 3)
+
+---
+
+#### **HU-3: Análisis Visual de la Planta**
+
+**Objetivo:** Proporcionar análisis de imágenes de plantas mediante visión artificial para detectar síntomas de plagas, enfermedades o deficiencias nutricionales.
+
+**Endpoint:** `POST /ai/analisis-imagen`
+
+**Content-Type:** `multipart/form-data`
+
+**Body:**
+- Campo `file`: Archivo de imagen (JPG, PNG, etc.)
+
+**Respuesta:**
+```json
+{
+  "estado": "moderado",
+  "posibles_causas": [
+    "Deficiencia de nitrógeno",
+    "Riego irregular"
+  ],
+  "recomendaciones": [
+    "Aplicar fertilizante rico en nitrógeno en las próximas 48 horas.",
+    "Ajustar el calendario de riego para mantener humedad constante en el suelo."
+  ],
+  "filename": "planta_001.jpg",
+  "mimetype": "image/jpeg",
+  "size": 245678
+}
+```
+
+**Estados posibles:**
+- `sana`: Planta en buen estado
+- `leve`: Síntomas menores detectados
+- `moderado`: Problemas moderados que requieren atención
+- `grave`: Problemas severos que requieren acción inmediata
+
+**Características:**
+-  Endpoint listo para integración con modelos de visión (YOLO, clasificación, GPT-4 Vision)
+-  Análisis estructurado con posibles causas y recomendaciones accionables
+-  Preparado para conectar con frontend mediante carga de archivos
+
+**Nota:** Actualmente implementado con análisis basado en prompt. La integración con modelos de visión entrenados (YOLO, clasificación) puede realizarse reemplazando la lógica interna del servicio sin cambiar la interfaz del endpoint.
+
+---
+
+### 🔧 Configuración Técnica
+
+**Variables de entorno requeridas:**
+```env
+OPENAI_API_KEY=sk-...
+```
+
+**Dependencias principales:**
+- `openai`: Cliente oficial de OpenAI API
+- `@nestjs/platform-express`: Para manejo de archivos multipart
+- Integración con módulos `AlertsModule` y `RecommendationsModule`
+
+**Estructura del módulo:**
+```
+src/ai/
+├── ai.module.ts          # Módulo NestJS con imports de Alerts y Recommendations
+├── ai.controller.ts      # Controlador con 3 endpoints principales
+├── ai.service.ts         # Lógica de IA, reglas y procesamiento
+└── dto/
+    └── detect-anomalies.dto.ts  # DTO para datos de sensores
+```
+
+---
+
 ## 🖥️ 3. Presentación y Decisión (Frontend NextJS)
 
 **Frontend NextJS:**  
@@ -125,20 +300,61 @@ Para verificar que el sistema de detección de anomalías funciona correctamente
 **Body:**
 ```json
 {
-  "humidity": 45,
-  "temp": 28,
-  "lux": 600,
-  "co2": 450,
+  "temp_ambiente": 28.5,
+  "hum_ambiente": 45,
+  "hum_suelo": 0,
+  "temp_suelo": 25.06,
+  "timestamp": "2025-12-15T15:09:48.174Z",
   "lastValues": [
-    { "humidity": 46, "temp": 27.5 },
-    { "humidity": 45.5, "temp": 27.8 }
+    {
+      "temp_ambiente": 26.3,
+      "hum_ambiente": 51,
+      "hum_suelo": 15,
+      "temp_suelo": 24.5,
+      "timestamp": "2025-12-15T14:09:48.174Z"
+    }
   ],
-  "idealRanges": "Temp: 22-26°C, Hum: 50-60%"
+  "idealRanges": "Temp ambiente: 22-26°C, Hum ambiente: 50-60%, Hum suelo: 20-40%",
+  "plantId": 1,
+  "sensorId": 1
 }
 ```
 
 **Respuesta esperada:**
-Un objeto JSON generado por la IA con el análisis de los datos, indicando posibles anomalías (ej. temperatura alta, humedad baja).
+Un objeto JSON generado por la IA con el análisis de los datos, indicando posibles anomalías:
+```json
+{
+  "anomalia": true,
+  "tipo": "anomalía_sensor",
+  "descripcion": "La humedad del suelo está en 0%, lo que indica posible falla del sensor o suelo extremadamente seco.",
+  "accion": "Verificar el sensor de humedad del suelo y considerar riego inmediato si la lectura es correcta.",
+  "severidad": 4,
+  "reanalizado": false,
+  "falsoPositivo": false
+}
+```
+
+**Nota:** Si se proporciona `plantId`, la anomalía se registrará automáticamente como una alerta en la base de datos.
+
+### 2. Verificación del Endpoint de Recomendaciones
+**Endpoint:** `POST http://localhost:3000/ai/recomendaciones`
+
+**Headers:** `Content-Type: application/json`
+
+**Body:** Misma estructura que el endpoint de anomalías
+
+**Respuesta esperada:**
+Lista de recomendaciones priorizadas con tipo y mensaje accionable.
+
+### 3. Verificación del Endpoint de Análisis Visual
+**Endpoint:** `POST http://localhost:3000/ai/analisis-imagen`
+
+**Headers:** `Content-Type: multipart/form-data`
+
+**Body:** Campo `file` con archivo de imagen
+
+**Respuesta esperada:**
+Análisis estructurado con estado de la planta, posibles causas y recomendaciones.
 
 ### 2. Verificación de Base de Datos
 - Asegúrate de que el servicio de PostgreSQL esté corriendo.
@@ -166,6 +382,10 @@ Un objeto JSON generado por la IA con el análisis de los datos, indicando posib
 - NestJS  
 - Módulo para consumir Arduino IoT Cloud  
 - Jobs para sincronizar lecturas  
+- **Módulo de IA** (OpenAI GPT) para análisis inteligente:
+  - Detección de anomalías con validación de falsos positivos
+  - Motor de recomendaciones (reglas + IA)
+  - Análisis visual de plantas
 - Autenticación JWT  
 - Roles / Permisos  
 - API REST  
@@ -349,4 +569,11 @@ iotsense-backend/
     │       │   └── recommendation.entity.ts
     │       └── dto/
     │           └── create-recommendation.dto.ts
+    │
+    ├── ai/
+    │   ├── ai.module.ts
+    │   ├── ai.controller.ts
+    │   ├── ai.service.ts
+    │   └── dto/
+    │       └── detect-anomalies.dto.ts
 ```
