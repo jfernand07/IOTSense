@@ -9,13 +9,15 @@ import { SensorsController } from './sensors.controller';
 import { Device } from '../devices/entities/device.entity';
 import { Plant } from '../plants/entities/plant.entity';
 import { MongodbModule } from '../../mongodb/mongodb.module';
+import { AiModule } from '../../ai/ai.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Sensor, SensorCurrentState, SensorThreshold, Device, Plant]),
     MongodbModule,
+    AiModule,
   ],
   providers: [SensorsService],
   controllers: [SensorsController],
 })
-export class SensorsModule {}
+export class SensorsModule { }
