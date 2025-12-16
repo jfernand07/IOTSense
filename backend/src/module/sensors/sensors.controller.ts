@@ -15,10 +15,12 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import { SensorsService } from './sensors.service';
 import { CreateSensorDto } from './dto/create-sensor.dto';
 import { UpdateSensorDto } from './dto/update-sensor.dto';
+import { CreateReadingDto } from './dto/create-reading.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Sensores')
 @ApiBearerAuth()
@@ -70,5 +72,13 @@ export class SensorsController {
   @ApiResponse({ status: 404, description: 'Sensor no encontrado.' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.sensorsService.remove(id);
+  }
+
+  @Post('readings')
+  @Public()
+  @ApiOperation({ summary: 'Registrar una lectura de sensor (IoT)' })
+  @ApiResponse({ status: 201, description: 'Lectura registrada correctamente.' })
+  async createReading(@Body() dto: CreateReadingDto) {
+    return this.sensorsService.createReading(dto);
   }
 }

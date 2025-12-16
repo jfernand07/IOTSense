@@ -8,9 +8,13 @@ import { SensorsService } from './sensors.service';
 import { SensorsController } from './sensors.controller';
 import { Device } from '../devices/entities/device.entity';
 import { Plant } from '../plants/entities/plant.entity';
+import { MongodbModule } from '../../mongodb/mongodb.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Sensor, SensorCurrentState, SensorThreshold, Device, Plant])],
+  imports: [
+    TypeOrmModule.forFeature([Sensor, SensorCurrentState, SensorThreshold, Device, Plant]),
+    MongodbModule,
+  ],
   providers: [SensorsService],
   controllers: [SensorsController],
 })
