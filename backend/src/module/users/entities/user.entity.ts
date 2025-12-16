@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, Index } from 'typeorm';
 import { Plant } from '../../plants/entities/plant.entity';
 
 export enum UserRole {
@@ -6,36 +6,41 @@ export enum UserRole {
   USER = 'user',
 }
 
-@Entity({ name: 'users' })
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'name', type: 'varchar', length: 100 })
+  @Column({ length: 100 })
   name: string;
 
   @Index({ unique: true })
-  @Column({ name: 'email', type: 'varchar', length: 255 })
+  @Column({ length: 255 })
   email: string;
 
-  @Column({ name: 'password_hash', type: 'text' })
+  @Column()
   passwordHash: string;
 
   @Column({
-    name: 'role',
     type: 'enum',
     enum: UserRole,
     default: UserRole.USER,
   })
   role: UserRole;
 
-  @Column({ name: 'is_active', type: 'boolean', default: true })
+  @Column({ default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @Column({ type: 'text', nullable: true })
+  refresh_token_hash: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  acces_token: string | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @OneToMany(() => Plant, (plant) => plant.owner)

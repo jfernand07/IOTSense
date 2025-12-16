@@ -1,38 +1,24 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateSensorDto {
+  @ApiProperty({ example: 3, description: 'ID del dispositivo al que pertenece el sensor' })
   @Type(() => Number)
   @IsInt()
   deviceId: number;
 
+  @ApiProperty({ example: 'humidity', description: 'Tipo de sensor' })
+  @IsString()
+  @MaxLength(50)
+  type: string;
+
+  @ApiProperty({ example: 1, description: 'Unidad de medida (ej: 1 = %, 2 = °C, etc.)' })
   @Type(() => Number)
   @IsInt()
-  sensorTypeId: number;
+  unit: number;
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  plantId?: number;
-
-  @IsString()
-  @MaxLength(100)
-  name: string;
-
-  @IsString()
-  @MaxLength(100)
-  externalId: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(10)
-  pin?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  calibrationOffset?: number; // si no llega -> default 0
-
+  @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;

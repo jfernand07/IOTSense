@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Sensor } from './entities/sensor.entity';
+import { SensorCurrentState } from './entities/sensor-current-state.entity';
+import { SensorThreshold } from './entities/sensor-threshold.entity';
 import { SensorsService } from './sensors.service';
 import { SensorsController } from './sensors.controller';
 import { Device } from '../devices/entities/device.entity';
-import { SensorType } from '../sensor-types/entities/sensor-type.entity';
 import { Plant } from '../plants/entities/plant.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Sensor, Device, SensorType, Plant])],
+  imports: [TypeOrmModule.forFeature([Sensor, SensorCurrentState, SensorThreshold, Device, Plant])],
   providers: [SensorsService],
   controllers: [SensorsController],
 })

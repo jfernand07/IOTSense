@@ -1,58 +1,91 @@
+// src/plants/plants.service.ts
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Plant } from './entities/plant.entity';
 import { CreatePlantDto } from './dto/create-plant.dto';
+import { UpdatePlantDto } from './dto/update-plant.dto';
 import { User } from '../users/entities/user.entity';
-import { PlantType } from '../plant-types/entities/plant-type.entity';
-import { PlantListItemDto } from './dto/plant-list-item.dto';
 
 @Injectable()
 export class PlantsService {
   constructor(
-    @InjectRepository(Plant) private readonly plantRepo: Repository<Plant>,
-    @InjectRepository(User) private readonly userRepo: Repository<User>,
-    @InjectRepository(PlantType) private readonly plantTypeRepo: Repository<PlantType>,
+    @InjectRepository(Plant)
+    private readonly plantRepo: Repository<Plant>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
   ) {}
 
-  async create(dto: CreatePlantDto) {
-    const owner = await this.userRepo.findOne({ where: { id: dto.ownerUserId } });
-    if (!owner) throw new NotFoundException('Owner user no existe.');
+  async create(dto: CreatePlantDto): Promise<Plant> {
+    const owner = await this.userRepo.findOne({
+      where: { id: dto.ownerUserId },
+    });
 
-    const plantType = await this.plantTypeRepo.findOne({ where: { id: dto.plantTypeId } });
-    if (!plantType) throw new NotFoundException('Plant type no existe.');
+    if (!owner) {
+      throw new NotFoundException('El usuario propietario no existe.');
+    }
 
     const plant = this.plantRepo.create({
       name: dto.name,
-      location: dto.location ?? null,
-      datePlanted: dto.datePlanted ?? null,
-      isActive: dto.isActive ?? true,
-      notes: dto.notes ?? null,
-      imageUrl: dto.imageUrl ?? null,
+      species: dto.species,
+      description: dto.description,
       owner,
-      plantType,
     });
 
-    // (opcional) reglas simples: tempMin <= tempMax etc. eso va en plant_type, no aquí.
     return this.plantRepo.save(plant);
   }
 
-  async findAll(): Promise<PlantListItemDto[]> {
-    const rows = await this.plantRepo
-      .createQueryBuilder('p')
-      .innerJoin('p.owner', 'u')
-      .innerJoin('p.plantType', 'pt')
-      .select([
-        'p.name AS "name"',
-        'p.location AS "location"',
-        'p.datePlanted AS "datePlanted"',
-        'u.name AS "ownerName"',
-        'pt.name AS "plantTypeName"',
-      ])
-      .orderBy('p.id', 'DESC')
-      .getRawMany<PlantListItemDto>();
+  async findAll(): Promise<Plant[]> {
+    return this.plantRepo.find({
+      relations: ['owner'],
+      order: { id: 'DESC' },
+    });
+  }
 
-    return rows;
+  async findOne(id: number): Promise<Plant> {
+    const plant = await this.plantRepo.findOne({
+      where: { id },
+      relations: ['owner', 'devices'],
+    });
+
+    if (!plant) {
+      throw new NotFoundException('Planta no encontrada');
+    }
+
+    return plant;
+  }
+
+  async update(id: number, dto: UpdatePlantDto): Promise<Plant> {
+    const plant = await this.plantRepo.findOne({ where: { id } });
+
+    if (!plant) {
+      throw new NotFoundException('Planta no encontrada');
+    }
+
+    if (dto.name !== undefined) plant.name = dto.name;
+    if (dto.species !== undefined) plant.species = dto.species;
+    if (dto.description !== undefined) plant.description = dto.description;
+
+    if (dto.ownerUserId !== undefined) {
+      const owner = await this.userRepo.findOne({
+        where: { id: dto.ownerUserId },
+      });
+      if (!owner) throw new NotFoundException('Nuevo usuario propietario no existe');
+      plant.owner = owner;
+    }
+
+    return this.plantRepo.save(plant);
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
+    const result = await this.plantRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('Planta no encontrada');
+    }
+
+    return { message: 'Planta eliminada correctamente' };
   }
 }

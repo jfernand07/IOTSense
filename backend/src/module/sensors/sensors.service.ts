@@ -1,84 +1,70 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Sensor } from './entities/sensor.entity';
-import { CreateSensorDto } from './dto/create-sensor.dto';
 import { Device } from '../devices/entities/device.entity';
-import { SensorType } from '../sensor-types/entities/sensor-type.entity';
-import { Plant } from '../plants/entities/plant.entity';
-import { SensorListItemDto } from './dto/sensor-list-item.dto';
+import { CreateSensorDto } from './dto/create-sensor.dto';
+import { UpdateSensorDto } from './dto/update-sensor.dto';
 
 @Injectable()
 export class SensorsService {
   constructor(
-    @InjectRepository(Sensor) private readonly sensorRepo: Repository<Sensor>,
-    @InjectRepository(Device) private readonly deviceRepo: Repository<Device>,
-    @InjectRepository(SensorType) private readonly sensorTypeRepo: Repository<SensorType>,
-    @InjectRepository(Plant) private readonly plantRepo: Repository<Plant>,
+    @InjectRepository(Sensor)
+    private readonly sensorRepo: Repository<Sensor>,
+
+    @InjectRepository(Device)
+    private readonly deviceRepo: Repository<Device>,
   ) {}
 
-  findByExternalId(externalId: string) {
-    return this.sensorRepo.findOne({ where: { externalId } });
-  }
+  async create(dto: CreateSensorDto): Promise<Sensor> {
+    const device = await this.deviceRepo.findOne({
+      where: { id: dto.deviceId },
+    });
 
-  async create(dto: CreateSensorDto) {
-    const existing = await this.findByExternalId(dto.externalId);
-    if (existing) throw new BadRequestException('Ya existe un sensor con ese externalId.');
-
-    const device = await this.deviceRepo.findOne({ where: { id: dto.deviceId } });
-    if (!device) throw new NotFoundException('Device no existe.');
-
-    const sensorType = await this.sensorTypeRepo.findOne({ where: { id: dto.sensorTypeId } });
-    if (!sensorType) throw new NotFoundException('SensorType no existe.');
-
-    let plant: Plant | null = null;
-    if (dto.plantId) {
-      plant = await this.plantRepo.findOne({ where: { id: dto.plantId } });
-      if (!plant) throw new NotFoundException('Plant no existe.');
-    }
+    if (!device) throw new NotFoundException('Dispositivo no encontrado');
 
     const sensor = this.sensorRepo.create({
-      name: dto.name,
-      externalId: dto.externalId,
-      pin: dto.pin ?? null,
-      calibrationOffset: String(dto.calibrationOffset ?? 0),
+      type: dto.type,
+      unit: dto.unit,
       isActive: dto.isActive ?? true,
       device,
-      sensorType,
-      plant,
     });
 
     return this.sensorRepo.save(sensor);
   }
 
-  async findAll(): Promise<SensorListItemDto[]> {
-    return this.sensorRepo
-      .createQueryBuilder('s')
-      .innerJoin('s.device', 'd')
-      .innerJoin('s.sensorType', 'st')
-      .leftJoin('s.plant', 'p') // plant puede ser NULL
-      .select([
-        // Device
-        'd.name AS "deviceName"',
-        'd.externalId AS "deviceExternalId"',
-        'd.description AS "deviceDescription"',
-        'd.status AS "deviceStatus"',
-        'd.location AS "deviceLocation"',
+  async findAll(): Promise<Sensor[]> {
+    return this.sensorRepo.find({ relations: ['device'] });
+  }
 
-        // SensorType
-        'st.displayName AS "sensorTypeDisplayName"',
-        'st.description AS "sensorTypeDescription"',
+  async findOne(id: number): Promise<Sensor | null> {
+    return this.sensorRepo.findOne({
+      where: { id },
+      relations: ['device'],
+    });
+  }
 
-        // Plant (opcional)
-        'p.name AS "plantName"',
-        'p.location AS "plantLocation"',
+  async update(id: number, dto: UpdateSensorDto): Promise<Sensor> {
+    const sensor = await this.sensorRepo.findOneBy({ id });
+    if (!sensor) throw new NotFoundException('Sensor no encontrado');
 
-        // Sensor
-        's.name AS "sensorName"',
-        's.externalId AS "sensorExternalId"',
-      ])
-      .orderBy('s.id', 'DESC')
-      .getRawMany<SensorListItemDto>();
+    if (dto.deviceId) {
+      const device = await this.deviceRepo.findOneBy({ id: dto.deviceId });
+      if (!device) throw new NotFoundException('Dispositivo no encontrado');
+      sensor.device = device;
+    }
+
+    if (dto.type !== undefined) sensor.type = dto.type;
+    if (dto.unit !== undefined) sensor.unit = dto.unit;
+    if (dto.isActive !== undefined) sensor.isActive = dto.isActive;
+
+    return this.sensorRepo.save(sensor);
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
+    const result = await this.sensorRepo.delete(id);
+    if (result.affected === 0) throw new NotFoundException('Sensor no encontrado');
+    return { message: 'Sensor eliminado correctamente' };
   }
 }
