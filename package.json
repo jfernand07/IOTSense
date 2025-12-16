@@ -3,6 +3,11 @@
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
     "@nestjs/typeorm": "^11.0.0",
+    "axios": "^1.13.2",
+    "confetti-js": "^0.0.18",
     "openai": "^6.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.2"
   }
 }
