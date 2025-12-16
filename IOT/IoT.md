@@ -192,48 +192,218 @@ El backend es el único que decide:
 
 ### 7.2 Endpoints disponibles
 
-#### Sensores
+### 7.1 Sensores
 
-```
-POST /api/sensors
-GET  /api/sensors/latest
-```
+#### POST /api/sensors
 
-#### Cámara
+Envía los datos desde la ESP32 al backend.
 
-```
-POST /api/camera/register
-GET  /api/camera/stream
-GET  /api/camera/control
-POST /api/camera/control
-```
+Request body (JSON):
 
-#### LED
-
-```
-POST /api/led
-GET  /api/led
+```json
+{
+  "temp_ambiente": 24.6,
+  "hum_ambiente": 58.2,
+  "hum_suelo": 71,
+  "temp_suelo": 19.8
+}
 ```
 
-#### Estado general
+Respuesta:
 
-```
-GET /api/status
+```json
+{
+  "status": "ok"
+}
 ```
 
 ---
 
-### 7.3 Flujo Backend
+#### GET /api/sensors/latest
 
-```
-ESP32           -> POST /api/sensors          -> Backend guarda último dato
-ESP32-CAM       -> POST /api/camera/register -> Backend registra IP
-Frontend        -> POST /api/camera/control  -> Backend activa streaming
-Frontend        -> GET  /api/camera/stream   -> Backend hace proxy MJPEG
-ESP32           -> GET  /api/led              -> Backend responde estado LED
+Devuelve el último registro recibido.
+
+Respuesta:
+
+```json
+{
+  "temp_ambiente": 24.6,
+  "hum_ambiente": 58.2,
+  "hum_suelo": 71,
+  "temp_suelo": 19.8,
+  "timestamp": "2025-01-10T21:34:12.123Z"
+}
 ```
 
 ---
+
+### 7.2 Cámara (ESP32-CAM)
+
+#### POST /api/camera/register
+
+La ESP32-CAM registra su IP y endpoint de streaming.
+
+Request body:
+
+```json
+{
+  "ip": "192.168.1.120",
+  "endpoint": "/stream"
+}
+```
+
+Notas:
+
+* `endpoint` es opcional.
+* Si no se envía, el backend asume `/stream`.
+
+Respuesta:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+#### GET /api/camera/stream
+
+Devuelve el stream MJPEG si está habilitado.
+
+Condiciones:
+
+* Cámara registrada.
+* `streamingActivo = true`.
+
+Respuesta:
+
+* Stream MJPEG (`multipart/x-mixed-replace`).
+* Si está desactivado:
+
+```json
+{
+  "error": "Streaming desactivado por backend"
+}
+```
+
+---
+
+### 7.3 Control Digital del Streaming
+
+#### GET /api/camera/control
+
+Consulta el estado actual del streaming.
+
+Respuesta:
+
+```json
+{
+  "streaming": true
+}
+```
+
+---
+
+#### POST /api/camera/control
+
+Activa o desactiva el streaming desde el frontend o Postman.
+
+Request body:
+
+```json
+{
+  "streaming": true
+}
+```
+
+o
+
+```json
+{
+  "streaming": false
+}
+```
+
+Respuesta:
+
+```json
+{
+  "streaming": true
+}
+```
+
+---
+
+### 7.4 Control de LED (ESP32)
+
+#### POST /api/led
+
+Enciende o apaga el LED remotamente.
+
+Request body:
+
+```json
+{
+  "state": true
+}
+```
+
+o
+
+```json
+{
+  "state": false
+}
+```
+
+Respuesta:
+
+```json
+{
+  "status": "ok",
+  "ledState": true
+}
+```
+
+---
+
+#### GET /api/led
+
+Consulta el estado actual del LED.
+
+Respuesta:
+
+```json
+{
+  "ledState": true
+}
+```
+
+---
+
+### 7.5 Estado General del Sistema
+
+#### GET /api/status
+
+Devuelve el estado completo del sistema IoT.
+
+Respuesta:
+
+```json
+{
+  "sensors": true,
+  "camera": true,
+  "cameraInfo": {
+    "ip": "192.168.1.120",
+    "endpoint": "/stream",
+    "registeredAt": "2025-01-10T21:30:05.000Z"
+  },
+  "streaming": true,
+  "time": "2025-01-10T21:35:40.000Z"
+}
+```
+
 
 ## 8. Frontend / Página Web
 
